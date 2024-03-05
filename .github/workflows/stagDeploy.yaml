@@ -1,0 +1,18 @@
+name: Stag Deploy
+run-name: redis-commander-${{ github.ref_name }}
+
+on:
+  push:
+    branches:
+      - INFRA-4132
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: flocasts/github-actions/.github/workflows/shared-build-container.yaml@main
+    with:
+      app-env: stag # required
+      app-name: redis-commander
+      build-role: github-actions-deploy-role
+      region: "us-west-2" # required
