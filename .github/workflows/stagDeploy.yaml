@@ -9,10 +9,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  set_env:
+    runs-on:
+      - self-hosted
+      - "flo-stag"
+    outputs:
+      ACCOUNT: ${{ vars.AWS_ACCOUNT_ID_FLOSTAG }}
+      APP_ENV: stag
+      APP_NAME: redis-commander
+      CLUSTER: stag
+      LOG_LEVEL: trace
+      DOMAIN: redis-commander.stag-aws.flokubernetes.com
+    steps: [{ run: "exit 0" }] # noop step to satisfy job requirements
+
   build:
+    needs: [set_env]
     uses: flocasts/github-actions/.github/workflows/shared-build-container.yaml@main
     with:
-      app-env: stag # required
-      app-name: redis-commander
+      app-env: ${{ needs.set_env.outputs.APP_ENV }}
+      app-name: ${{ needs.set_env.outputs.APP_NAME }}
       build-role: github-actions-deploy-role
-      region: "us-west-2" # required
+      build-args: |
+        --progress=plain
+        APP_NAME: ${{ needs.set_env.outputs.APP_NAME }}
