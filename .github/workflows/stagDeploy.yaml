@@ -32,3 +32,4 @@ jobs:
       build-args: |
         --progress=plain
         APP_NAME: ${{ needs.set_env.outputs.APP_NAME }}
+      region: us-west-2
